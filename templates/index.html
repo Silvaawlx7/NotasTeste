@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Notas - Web</title>
+    <style>
+        * { box-sizing: border-box; font-family: Arial, sans-serif; }
+        body { background-color: #f0f2f5; margin: 0; padding: 15px; display: flex; justify-content: center; }
+        
+        /* Container no estilo Smartphone para cumprir o critério */
+        .mobile-card {
+            width: 100%; max-width: 480px; background: white;
+            border-radius: 16px; padding: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        h2, h3 { text-align: center; color: #333; margin-top: 0; }
+        .form-group { margin-bottom: 10px; }
+        label { font-weight: bold; font-size: 14px; display: block; margin-bottom: 3px; }
+        input, select { width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 6px; }
+        .btn { width: 100%; padding: 10px; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; margin-top: 5px; }
+        .btn-green { background-color: #28a745; color: white; }
+        .btn-blue { background-color: #007bff; color: white; }
+        .btn-danger { background-color: #dc3545; color: white; padding: 4px 8px; border-radius: 4px; text-decoration: none; font-size: 12px; }
+        
+        .alert { padding: 10px; border-radius: 6px; margin-bottom: 10px; text-align: center; font-size: 14px; }
+        .alert-success { background: #d4edda; color: #155724; }
+        .alert-danger { background: #f8d7da; color: #721c24; }
+
+        .stats-box { background: #e9ecef; padding: 10px; border-radius: 6px; margin: 15px 0; font-size: 13px; }
+        .item-aluno { border-bottom: 1px solid #eee; padding: 10px 0; display: flex; justify-content: space-between; align-items: center; }
+        .badge { padding: 3px 7px; border-radius: 4px; color: white; font-size: 11px; font-weight: bold; }
+        .Aprovado { background-color: #28a745; }
+        .Recuperação { background-color: #ffc107; color: black; }
+        .Reprovado { background-color: #dc3545; }
+    </style>
+</head>
+<body>
+
+<div class="mobile-card">
+    <h2>📱 Sistema de Notas</h2>
+
+    <!-- Exibição de Erros / Sucessos (Try/Except Feedback) -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="alert alert-{{ category }}">{{ message }}</div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    <!-- Form de Cadastro -->
+    <form action="/cadastrar" method="POST">
+        <div class="form-group">
+            <label>Nome do Aluno:</label>
+            <input type="text" name="nome" required>
+        </div>
+        <div class="form-group">
+            <label>Série:</label>
+            <input type="text" name="serie" required>
+        </div>
+        <div class="form-group">
+            <label>Nota da Prova:</label>
+            <input type="text" name="nota" placeholder="Ex: 7.5" required>
+        </div>
+        <button type="submit" class="btn btn-green">Cadastrar Aluno</button>
+    </form>
+
+    <hr style="margin: 20px 0;">
+
+    <!-- Filtro e Pesquisa -->
+    <form action="/" method="GET">
+        <div class="form-group">
+            <input type="text" name="busca" placeholder="Buscar por Nome/Série" value="{{ busca }}">
+        </div>
+        <div class="form-group">
+            <select name="situacao">
+                <option value="Todos" {% if situacao_selecionada == 'Todos' %}selected{% endif %}>Mostrar Todos</option>
+                <option value="Aprovado" {% if situacao_selecionada == 'Aprovado' %}selected{% endif %}>Somente Aprovados</option>
+                <option value="Recuperação" {% if situacao_selecionada == 'Recuperação' %}selected{% endif %}>Somente Recuperação</option>
+                <option value="Reprovado" {% if situacao_selecionada == 'Reprovado' %}selected{% endif %}>Somente Reprovados</option>
+            </select>
+        </div>
+        <button type="submit" class="btn btn-blue">Filtrar</button>
+    </form>
+
+    <!-- Estatísticas -->
+    <div class="stats-box">
+        <strong>Estatísticas da Turma:</strong><br>
+        Total: {{ stats.total }} | Média: {{ stats.media }}<br>
+        Aprovados: {{ stats.aprovados }} | Rec: {{ stats.recuperacao }} | Reprovados: {{ stats.reprovados }}
+    </div>
+
+    <!-- Lista de Alunos -->
+    <h3>Lista de Alunos</h3>
+    {% for aluno in alunos %}
+    <div class="item-aluno">
+        <div>
+            <strong>{{ aluno.nome }}</strong> ({{ aluno.serie }})<br>
+            <small>Nota: {{ aluno.nota }} | <span class="badge {{ aluno.situacao }}">{{ aluno.situacao }}</span></small><br>
+            <small style="color: #777;">Data: {{ aluno.data_registro }}</small>
+        </div>
+        <div>
+            <a href="/excluir/{{ aluno.id }}" class="btn-danger" onclick="return confirm('Excluir este aluno?')">X</a>
+        </div>
+    </div>
+    {% else %}
+    <p style="text-align: center; color: #888;">Nenhum aluno encontrado.</p>
+    {% endfor %}
+</div>
+
+</body>
+</html>

@@ -1,0 +1,26 @@
+[
+    {
+        "id": 1,
+        "nome": "Geovane",
+        "serie": "2 ano",
+        "nota": 9.0,
+        "situacao": "Aprovado",
+        "data_registro": "29/09/2026 20:30:59"
+    },
+    {
+        "id": 2,
+        "nome": "Maria",
+        "serie": "2 ano",
+        "nota": 6.0,
+        "situacao": "Recuperação",
+        "data_registro": "29/09/2026 20:31:23"
+    },
+    {
+        "id": 3,
+        "nome": "Pedro",
+        "serie": "2 ano",
+        "nota": 4.5,
+        "situacao": "Reprovado",
+        "data_registro": "29/09/2026 20:31:56"
+    }
+]
